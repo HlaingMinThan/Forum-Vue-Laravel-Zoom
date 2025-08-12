@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -34,6 +36,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'categories' => Category::all(),
+            'tags' => Tag::all()
         ];
     }
 }
