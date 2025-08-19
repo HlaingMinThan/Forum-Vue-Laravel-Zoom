@@ -1,6 +1,6 @@
 <template>
   <!-- Threads Header -->
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
             <div class="px-6 py-4 border-b border-gray-200">
               <div class="flex items-center justify-between">
                 <h2 class="text-lg font-semibold text-gray-900">Recent Threads</h2>
@@ -28,12 +28,12 @@
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center space-x-2 mb-2">
-                      <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">General Discussion</span>
+                      <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">{{thread.category?.name}}</span>
                       <span class="text-sm text-gray-500">{{ moment(thread.created_at,"YYYYMMDD").fromNow() }}</span>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer">
+                    <Link :href="'/threads/'+thread.id" class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer">
                       {{thread.title}}
-                    </h3>
+                    </Link>
                     <p class="text-gray-600 mb-3 line-clamp-2">
                       {{thread.body}}...
                     </p>
@@ -84,9 +84,11 @@
 </template>
 
 <script>
+import { Link } from '@inertiajs/vue3';
 import moment from 'moment';
 
 export default {
+  components:{Link},
   name: 'Home',
   props : {
     threads : {

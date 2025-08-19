@@ -27,4 +27,14 @@ class Thread extends Model
     {
         return $this->belongsToMany(Tag::class, 'tag_thread');
     }
+
+    public function scopeFilter($query, $param)
+    {
+        $query->when($param, function ($query) use ($param) {
+            $query->whereHas('category', function ($query) use ($param) {
+                $category = $param;
+                return $query->where('slug', $category);
+            });
+        });
+    }
 }

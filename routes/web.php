@@ -1,19 +1,16 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ThreadController;
 use App\Models\Thread;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return inertia('Home', [
-        'threads' => Thread::latest()->get(),
-    ]);
-});
-Route::get('/new-thread', function () {
-    return inertia('NewThread', []);
-});
+Route::get('/', [ThreadController::class, 'index']);
+Route::get('/threads/{thread}', [ThreadController::class, 'show']);
+Route::get('/new-thread', [ThreadController::class, 'create']);
+Route::post('/threads', [ThreadController::class, 'store']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

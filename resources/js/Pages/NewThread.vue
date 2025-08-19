@@ -34,8 +34,10 @@
               type="text"
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               placeholder="Enter a descriptive title for your thread..."
-              required
             />
+            <p v-if="errors?.title" class="text-xs mt-2  ml-1 text-red-500">
+                {{errors.title}}
+            </p>
             <p class="mt-1 text-sm text-gray-500">
               Make it clear and specific to help others find your thread
             </p>
@@ -50,7 +52,6 @@
               id="category"
               v-model="form.category_id"
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-              required
             >
               <option value="">Select a category</option>
               <option 
@@ -62,6 +63,9 @@
                 {{ category.name }}
               </option>
             </select>
+            <p v-if="errors?.category_id" class="text-xs mt-2  ml-1 text-red-500">
+                {{errors.category_id}}
+            </p>
             <p class="mt-1 text-sm text-gray-500">
               Choose the most appropriate category for your thread
             </p>
@@ -150,8 +154,10 @@
               rows="8"
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
               placeholder="Share your thoughts, questions, or ideas here..."
-              required
             ></textarea>
+            <p v-if="errors?.body" class="text-xs mt-2  ml-1 text-red-500">
+                {{errors.body}}
+            </p>
             <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
               <span>Be clear and detailed to get better responses</span>
               <span>{{ form.body.length }}/5000 characters</span>
@@ -255,16 +261,15 @@ export default {
   computed: {
     popularTags() {
       return this.tags.slice(0, 6) // Show first 6 tags as popular
+    },
+    errors(){
+      return this.$page.props.errors;
     }
   },
   methods: {
     submitForm() {
-      this.form.tag_ids = this.selectedTags.map(tag => tag.id)
-      this.form.post('/threads', {
-        onSuccess: () => {
-          // Handle success
-        }
-      })
+      this.form.tag_ids = this.selectedTags.map(tag => tag.id);
+      this.form.post('/threads')
     },
     addTag(tag) {
       if (!this.isTagSelected(tag)) {

@@ -55,7 +55,7 @@
               <!-- Categories List -->
               <div class="p-4">
                 <div class="space-y-2">
-                  <div v-for="category in $page.props.categories" :key="category.id" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                  <Link :href="'/?category='+category.slug" v-for="category in $page.props.categories" :key="category.id" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
                     <div class="flex items-center space-x-3">
                       <!-- <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                         <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -69,7 +69,7 @@
                       </div>
                     </div>
                     <span class="text-sm text-gray-400">1.2k</span>
-                  </div>
+                  </Link>
   
                 </div>
               </div>
