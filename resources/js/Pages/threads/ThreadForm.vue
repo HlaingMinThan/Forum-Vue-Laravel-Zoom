@@ -5,7 +5,7 @@
       <div class="mb-8">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900">Create New Thread</h1>
+            <h1 class="text-3xl font-bold text-gray-900">{{thread ? 'Edit' : 'Create New'}}  Thread</h1>
             <p class="mt-2 text-gray-600">Share your thoughts and start a discussion</p>
           </div>
           <Link 
@@ -78,7 +78,7 @@
             </label>
             <div class="space-y-3">
               <!-- Selected Tags -->
-              <div v-if="selectedTags.length > 0" class="flex flex-wrap gap-2">
+              <div v-if="selectedTags?.length > 0" class="flex flex-wrap gap-2">
                 <span
                   v-for="tag in selectedTags"
                   :key="tag.id"
@@ -160,7 +160,7 @@
             </p>
             <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
               <span>Be clear and detailed to get better responses</span>
-              <span>{{ form.body.length }}/5000 characters</span>
+              <span>{{ form.body?.length }}/5000 characters</span>
             </div>
           </div>
 
@@ -182,7 +182,7 @@
                 class="px-8 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <span v-if="form.processing">Creating...</span>
-                <span v-else>Create Thread</span>
+                <span v-else>{{thread ? 'Update': 'Create'}} Thread</span>
               </button>
             </div>
           </div>
@@ -235,6 +235,10 @@ export default {
   name: 'NewThread',
   components: { Link},
   props: {
+    thread: {
+      type: Object,
+      default: () => null
+    },
     categories: {
       type: Array,
       default: () => []
@@ -247,12 +251,12 @@ export default {
   data() {
     return {
       form: useForm({
-        title: '',
-        body: '',
-        category_id: '',
+        title: this.thread?.title,
+        body: this.thread?.body,
+        category_id: this.thread?.category_id,
         tag_ids: []
       }),
-      selectedTags: [],
+      selectedTags: this.thread?.tags ?? [],
       tagSearch: '',
       filteredTags: [],
       showPreview: false
@@ -269,20 +273,24 @@ export default {
   methods: {
     submitForm() {
       this.form.tag_ids = this.selectedTags.map(tag => tag.id);
-      this.form.post('/threads')
+      if(!!this.thread) {
+        this.form.put(route('threads.update',this.thread.id));
+      }else {
+        this.form.post('/threads')
+      }
     },
     addTag(tag) {
       if (!this.isTagSelected(tag)) {
-        this.selectedTags.push(tag)
+        this.selectedTags?.push(tag)
       }
       this.tagSearch = ''
       this.filteredTags = []
     },
     removeTag(tag) {
-      this.selectedTags = this.selectedTags.filter(t => t.id !== tag.id)
+      this.selectedTags = this.selectedTags?.filter(t => t.id !== tag.id)
     },
     isTagSelected(tag) {
-      return this.selectedTags.some(t => t.id === tag.id)
+      return this.selectedTags?.some(t => t.id === tag.id)
     },
     filterTags() {
       if (!this.tagSearch) {

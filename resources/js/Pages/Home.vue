@@ -53,9 +53,32 @@
                           <span>1.2k views</span>
                         </span>
                       </div>
-                      <div class="flex items-center space-x-2">
-                        <span class="text-sm text-gray-500">by</span>
-                        <span class="text-sm font-medium text-gray-900">John Doe</span>
+                      <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2">
+                          <span class="text-sm text-gray-500">by</span>
+                          <span class="text-sm font-medium text-gray-900">{{thread.user.name}}</span>
+                        </div>
+                        <Link
+                        :href="route('threads.edit',thread.id)"
+                        v-if="$page.props.auth?.user && thread.threadActionAuthorize"
+                          class="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors"
+                        >
+                          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M15 7V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3" />
+                          </svg>
+                          <span class="hidden sm:inline">Edit</span>
+                        </Link>
+                        <button
+                        v-if="$page.props.auth?.user && thread.threadActionAuthorize"
+                          type="button"
+                          class="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors"
+                          @click="openDeleteModal(thread)"
+                        >
+                          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M15 7V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3" />
+                          </svg>
+                          <span class="hidden sm:inline">Delete</span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -65,6 +88,45 @@
 
         
           </div>
+
+          <!-- Delete Confirmation Modal -->
+          <Modal :show="showDeleteModal" @close="closeDeleteModal">
+            <div class="p-6">
+              <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M4.93 4.93l14.14 14.14M12 3a9 9 0 100 18 9 9 0 000-18z" />
+                  </svg>
+                </div>
+                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900">Delete thread</h3>
+                  <div class="mt-2">
+                    <p class="text-sm text-gray-500">
+                      Are you sure you want to delete
+                      <span class="font-semibold text-gray-700">"{{ threadToDelete?.title }}"</span>?
+                      This action cannot be undone.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-6 sm:mt-5 sm:flex sm:flex-row-reverse sm:space-x-reverse sm:space-x-3">
+                <button
+                  type="button"
+                  class="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto"
+                  @click="confirmDelete"
+                >
+                  Delete
+                </button>
+                <button
+                  type="button"
+                  class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:w-auto"
+                  @click="closeDeleteModal"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </Modal>
 
           <!-- Pagination -->
           <div class="mt-8 flex items-center justify-between">
@@ -85,10 +147,11 @@
 
 <script>
 import { Link } from '@inertiajs/vue3';
+import Modal from '@/Components/Modal.vue';
 import moment from 'moment';
 
 export default {
-  components:{Link},
+  components:{Link, Modal},
   name: 'Home',
   props : {
     threads : {
@@ -97,10 +160,25 @@ export default {
   },
   data() {
     return {
-      // Add reactive data here if needed
+      showDeleteModal: false,
+      threadToDelete: null,
     }
   },
-  methods:{ moment },
+  methods:{
+    moment,
+    openDeleteModal(thread){
+      this.threadToDelete = thread;
+      this.showDeleteModal = true;
+    },
+    closeDeleteModal(){
+      this.showDeleteModal = false;
+      this.threadToDelete = null;
+    },
+    confirmDelete(){
+      this.$inertia.delete(route('threads.destroy',this.threadToDelete.id));
+      this.closeDeleteModal();
+    }
+  },
   mounted(){
     console.log(this.threads);
   }
