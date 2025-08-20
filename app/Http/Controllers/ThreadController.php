@@ -9,7 +9,7 @@ class ThreadController extends Controller
     public function index()
     {
         return inertia('Home', [
-            'threads' => Thread::with('category')->filter(request('category'))->latest()->get(),
+            'threads' => Thread::with('category')->filter(request(['category', 'tag', 'search']))->latest()->get(),
         ]);
     }
 

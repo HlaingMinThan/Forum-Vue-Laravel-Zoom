@@ -4,7 +4,7 @@
       <header class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between items-center py-4">
-            <Link href="/" class="flex items-center">
+            <Link :href="route('home')" class="flex items-center">
               <h1 class="text-2xl font-bold text-gray-900">CC Forum</h1>
             </Link>
             <div class="flex items-center space-x-4">
@@ -17,6 +17,7 @@
                   type="text" 
                   placeholder="Search forums..." 
                   class="w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  v-model="search"
                 >
               </div>
               <template v-if="!$page.props.auth.user">
@@ -82,7 +83,9 @@
               </div>
               <div class="p-4">
                 <div class="flex flex-wrap gap-2">
-                  <span v-for="tag in $page.props.tags"  :key="tag.id" class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">#{{tag.name}}</span>
+                  <Link :href="route('home',{
+                    tag : tag.slug
+                  })" v-for="tag in $page.props.tags"  :key="tag.id" class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">#{{tag.name}}</Link>
                   
                 </div>
               </div>
@@ -112,7 +115,14 @@ import { Link } from '@inertiajs/vue3';
     },
     data() {
       return {
-        // Add reactive data here if needed
+        search : ""
+      }
+    },
+    watch : {
+      search(){
+        this.$inertia.visit(route('home', {
+          search : this.search
+        }));
       }
     },
     mounted(){

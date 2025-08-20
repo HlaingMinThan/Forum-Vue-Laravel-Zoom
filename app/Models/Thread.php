@@ -28,13 +28,22 @@ class Thread extends Model
         return $this->belongsToMany(Tag::class, 'tag_thread');
     }
 
-    public function scopeFilter($query, $param)
+    public function scopeFilter($query, $filters)
     {
-        $query->when($param, function ($query) use ($param) {
-            $query->whereHas('category', function ($query) use ($param) {
-                $category = $param;
+        $query->when($filters['category'] ?? null, function ($query, $category) {
+            $query->whereHas('category', function ($query) use ($category) {
                 return $query->where('slug', $category);
             });
+        });
+
+        $query->when($filters['tag'] ?? null, function ($query, $tag) {
+            $query->whereHas('tags', function ($query) use ($tag) {
+                return $query->where('slug', $tag);
+            });
+        });
+
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where('title', 'like', '%' . $search . '%');
         });
     }
 }

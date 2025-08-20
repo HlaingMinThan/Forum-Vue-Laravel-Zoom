@@ -31,7 +31,7 @@
                       <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">{{thread.category?.name}}</span>
                       <span class="text-sm text-gray-500">{{ moment(thread.created_at,"YYYYMMDD").fromNow() }}</span>
                     </div>
-                    <Link :href="'/threads/'+thread.id" class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer">
+                    <Link :href="route('threads.show',thread.id)" class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer">
                       {{thread.title}}
                     </Link>
                     <p class="text-gray-600 mb-3 line-clamp-2">

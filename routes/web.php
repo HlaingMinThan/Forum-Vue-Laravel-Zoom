@@ -7,8 +7,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', [ThreadController::class, 'index']);
-Route::get('/threads/{thread}', [ThreadController::class, 'show']);
+Route::get('/', [ThreadController::class, 'index'])->name('home');
+Route::get('/threads/{thread}', [ThreadController::class, 'show'])->name('threads.show');
 Route::get('/new-thread', [ThreadController::class, 'create']);
 Route::post('/threads', [ThreadController::class, 'store']);
 
