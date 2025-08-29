@@ -19,6 +19,8 @@ Route::post('/threads', [ThreadController::class, 'store']);
 Route::delete('/threads/{thread}', [ThreadController::class, 'destroy'])->name('threads.destroy');
 
 Route::post('/threads/{thread}/comments/store', [CommentController::class, 'store'])->middleware('auth');
+Route::put('/comments/{comment}/update', [CommentController::class, 'update'])->name('comments.update');
+Route::delete('/comments/{comment}/destroy', [CommentController::class, 'destroy'])->middleware('auth');
 
 
 Route::middleware('auth')->group(function () {

@@ -19,7 +19,13 @@ class ThreadController extends Controller
     public function show(Thread $thread)
     {
         return inertia("threads/show", [
-            'thread' => $thread->load('category', 'comments.user')
+            'thread' => function () use ($thread) {
+                return $thread->load(['category']);
+            },
+            'comments' => fn() => $thread->comments()->with('user')->latest()->get()->map(function ($comment) {
+                $comment->commentActionAuthorize = auth()->user()?->can('commentActionAuthorize', $comment);
+                return $comment;
+            })
         ]);
     }
 

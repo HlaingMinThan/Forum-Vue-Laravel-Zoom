@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Comment;
 use App\Models\Thread;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('threadActionAuthorize', function (User $user, Thread $thread) {
             return $user->id === $thread->user_id;
+        });
+
+        Gate::define('commentActionAuthorize', function (User $user, Comment $comment) {
+            return $user->id === $comment->user_id;
         });
     }
 }

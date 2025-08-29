@@ -98,7 +98,12 @@
       <!-- Comments -->
       <div class="mt-6">
         <!-- Comment Form (design only) -->
-        <form @submit.prevent="storeComment" class="bg-white rounded-lg shadow-sm border p-6">
+        <Form 
+        resetOnSuccess
+        :options="{
+          preserveScroll: true,
+        }"
+        :action="`/threads/${thread.id}/comments/store`" method="post" class="bg-white rounded-lg shadow-sm border p-6">
           <h3 class="text-lg font-semibold text-gray-900">Comments</h3>
           <div class="mt-4 flex items-start space-x-4">
             <div class="flex-shrink-0">
@@ -109,6 +114,7 @@
             <div class="flex-1">
               <div class="relative">
                 <textarea
+                  name="body"
                   v-model="commentBody"
                   rows="4"
                   maxlength="1000"
@@ -131,14 +137,14 @@
               </div>
             </div>
           </div>
-        </form>
+        </Form>
 
         <!-- Comment List (design only) -->
         <div class="mt-6 bg-white rounded-lg shadow-sm border divide-y">
           <div v-if="thread.comments?.length === 0" class="p-6 text-center text-gray-500">
             No comments yet. Be the first to share your thoughts!
           </div>
-          <div v-for="comment in thread.comments" :key="comment.id" class="p-6">
+          <div v-for="comment in comments" :key="comment.id" class="p-6">
             <div class="flex items-start space-x-4">
               <div class="flex-shrink-0">
                 <Link :href="route('users.show',comment.user.id)" class="w-10 h-10 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center font-semibold">
@@ -152,8 +158,32 @@
                     <p class="text-xs text-gray-500">{{ comment.time }}</p>
                   </div>
                 </div>
-                <div class="mt-3 whitespace-pre-wrap text-gray-800 leading-relaxed">
-                  {{ comment.body }}
+                <div class="mt-3 text-gray-800 leading-relaxed">
+                  <div v-if="editingId === comment.id">
+                    <Form :action="`/comments/${comment.id}/update`" method="put" :options="{
+                      preserveScroll:true,
+                      onSuccess: () => {
+                        cancelEdit()
+                      },
+                    }">
+                      <textarea
+                        name="body"
+                        v-model="editedText"
+                        rows="4"
+                        maxlength="1000"
+                        class="w-full resize-y rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 px-4 py-3 text-gray-800 placeholder:text-gray-400"
+                      ></textarea>
+                      <div class="mt-2 flex items-center justify-end space-x-2">
+                        <div >
+                        <button @click="cancelEdit" type="button" class="inline-flex items-center px-3 py-2 rounded-md border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Cancel</button>
+                          <button type="submit" :disabled="!editedText.trim()" class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Save</button>
+                        </div>
+                      </div>
+                    </Form>
+                  </div>
+                  <div v-else class="whitespace-pre-wrap">
+                    {{ comment.body }}
+                  </div>
                 </div>
                 <div class="mt-4 flex items-center space-x-4 text-sm text-gray-600">
                   <button class="inline-flex items-center space-x-1 hover:text-gray-900">
@@ -168,12 +198,38 @@
                     </svg>
                     <span>Like</span>
                   </button>
-                  <button class="inline-flex items-center space-x-1 hover:text-gray-900">
+                  <template v-if="editingId === comment.id">
+                    <button @click="cancelEdit" class="inline-flex items-center space-x-1 hover:text-gray-900">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      <span>Cancel</span>
+                    </button>
+                    <button @click="saveEdit" :disabled="!editedText.trim()" class="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-700 disabled:opacity-50">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>Save</span>
+                    </button>
+                  </template>
+                  <button v-else-if="comment.commentActionAuthorize" @click="startEdit(comment)" class="inline-flex items-center space-x-1 hover:text-gray-900">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h12M6 6h12M6 18h12"></path>
                     </svg>
-                    <span>More</span>
+                    <span>Edit</span>
                   </button>
+                  <Form 
+                  v-if="comment.commentActionAuthorize"
+                  :options="{
+                    preserveScroll : true
+                  }"
+                  :action="`/comments/${comment.id}/destroy`" method="delete">
+                    <button type="submit" class="inline-flex items-center space-x-1 text-red-500
+                  hover:text-gray-900">
+                    
+                    <span>delete</span>
+                  </button>
+                  </Form>
                 </div>
               </div>
             </div>
@@ -184,79 +240,68 @@
   </div>
 </template>
 
-<script>
-import { Link } from '@inertiajs/vue3'
+<script setup>
+import { ref, computed } from 'vue'
+import { Link, usePoll, Form } from '@inertiajs/vue3'
 
-export default {
-  components: {
-    Link,
+
+const props = defineProps({
+  thread: {
+    type: Object,
+    required: true
   },
-  props: {
-    thread: {
-      type: Object,
-      required: true
-    }
+  comments: {
+    type: Array,
+    required: true
   },
-  data() {
-    return {
-      commentBody: '',
-      mockComments: [
-        {
-          id: 1,
-          author: 'Jane Doe',
-          time: '2 hours ago',
-          body: 'This is a great discussion. I especially liked the part about leveraging categories and tags together.'
-        },
-        {
-          id: 2,
-          author: 'John Smith',
-          time: 'Yesterday',
-          body: 'Thanks for sharing! One small suggestion: maybe add examples for newcomers.'
-        }
-      ]
-    }
-  },
-  computed: {
-    displayComments() {
-      if (this.thread && Array.isArray(this.thread.comments)) {
-        return this.thread.comments
-      }
-      return this.mockComments
-    },
-    charCount() {
-      return this.commentBody.length
-    }
-  },
-  methods: {
-    storeComment(){
-      this.$inertia.post('/threads/' +this.thread.id+'/comments/store', {
-        body : this.commentBody
-      })
-      this.commentBody = "";
-    },
-    formatDate(dateString) {
-      if (!dateString) return 'Unknown'
-      
-      const date = new Date(dateString)
-      const now = new Date()
-      const diffTime = Math.abs(now - date)
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      
-      if (diffDays === 1) {
-        return 'Yesterday'
-      } else if (diffDays < 7) {
-        return `${diffDays} days ago`
-      } else {
-        return date.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric'
-        })
-      }
-    }
+})
+
+usePoll(5000,{
+  only : ['comments']
+})
+
+const commentBody = ref('')
+// const localComments = ref([...props.comments])
+const editingId = ref(null)
+const editedText = ref('')
+
+const charCount = computed(() => commentBody.value.length)
+
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'Unknown'
+  
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffTime = Math.abs(now - date)
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 1) {
+    return 'Yesterday'
+  } else if (diffDays < 7) {
+    return `${diffDays} days ago`
+  } else {
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
   }
 }
+
+function startEdit(comment){
+  editingId.value = comment.id
+  editedText.value = comment.body
+}
+
+function cancelEdit(){
+  editingId.value = null
+  editedText.value = ''
+}
+
+
 </script>
+
 
 <style scoped>
 .prose {
