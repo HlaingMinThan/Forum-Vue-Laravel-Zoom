@@ -22,9 +22,9 @@
               <div class="p-6">
                 <div class="flex items-start space-x-4">
                   <div class="flex-shrink-0">
-                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span class="text-blue-600 font-semibold">JD</span>
-                    </div>
+                    <Link :href="route('users.show',thread.user.id)" class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span class="text-blue-600 font-semibold"> {{ thread.user?.name ? thread.user.name.charAt(0).toUpperCase() : 'A' }}</span>
+                    </Link >
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center space-x-2 mb-2">

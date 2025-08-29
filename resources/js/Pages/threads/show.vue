@@ -4,7 +4,7 @@
     <div class="bg-white shadow-sm border-b">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-center space-x-4">
-          <Link href="/" class="text-gray-500 hover:text-gray-700 transition-colors">
+          <Link prefetch="mount" href="/" class="text-gray-500 hover:text-gray-700 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
@@ -94,6 +94,92 @@
           </div>
         </div>
       </div>
+
+      <!-- Comments -->
+      <div class="mt-6">
+        <!-- Comment Form (design only) -->
+        <form @submit.prevent="storeComment" class="bg-white rounded-lg shadow-sm border p-6">
+          <h3 class="text-lg font-semibold text-gray-900">Comments</h3>
+          <div class="mt-4 flex items-start space-x-4">
+            <div class="flex-shrink-0">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-sky-500 text-white flex items-center justify-center font-semibold">
+                U
+              </div>
+            </div>
+            <div class="flex-1">
+              <div class="relative">
+                <textarea
+                  v-model="commentBody"
+                  rows="4"
+                  maxlength="1000"
+                  placeholder="Write a comment..."
+                  class="w-full resize-y rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 px-4 py-3 text-gray-800 placeholder:text-gray-400"
+                ></textarea>
+                <div class="mt-2 flex items-center justify-between">
+                  <div class="flex items-center space-x-2 text-xs text-gray-500">
+                    <span>{{ charCount }}/1000</span>
+                  </div>
+                  <div class="space-x-2">
+                    <button type="button" class="inline-flex items-center px-3 py-2 rounded-md border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                      Cancel
+                    </button>
+                    <button type="submit" :disabled="!commentBody.trim()" class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                      Post comment
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <!-- Comment List (design only) -->
+        <div class="mt-6 bg-white rounded-lg shadow-sm border divide-y">
+          <div v-if="thread.comments?.length === 0" class="p-6 text-center text-gray-500">
+            No comments yet. Be the first to share your thoughts!
+          </div>
+          <div v-for="comment in thread.comments" :key="comment.id" class="p-6">
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0">
+                <Link :href="route('users.show',comment.user.id)" class="w-10 h-10 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center font-semibold">
+                  {{ comment.user.name.charAt(0).toUpperCase() }}
+                </Link>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">{{ comment.user.name }}</p>
+                    <p class="text-xs text-gray-500">{{ comment.time }}</p>
+                  </div>
+                </div>
+                <div class="mt-3 whitespace-pre-wrap text-gray-800 leading-relaxed">
+                  {{ comment.body }}
+                </div>
+                <div class="mt-4 flex items-center space-x-4 text-sm text-gray-600">
+                  <button class="inline-flex items-center space-x-1 hover:text-gray-900">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <span>Reply</span>
+                  </button>
+                  <button class="inline-flex items-center space-x-1 hover:text-gray-900">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span>Like</span>
+                  </button>
+                  <button class="inline-flex items-center space-x-1 hover:text-gray-900">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h12M6 6h12M6 18h12"></path>
+                    </svg>
+                    <span>More</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -103,7 +189,7 @@ import { Link } from '@inertiajs/vue3'
 
 export default {
   components: {
-    Link
+    Link,
   },
   props: {
     thread: {
@@ -111,7 +197,43 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      commentBody: '',
+      mockComments: [
+        {
+          id: 1,
+          author: 'Jane Doe',
+          time: '2 hours ago',
+          body: 'This is a great discussion. I especially liked the part about leveraging categories and tags together.'
+        },
+        {
+          id: 2,
+          author: 'John Smith',
+          time: 'Yesterday',
+          body: 'Thanks for sharing! One small suggestion: maybe add examples for newcomers.'
+        }
+      ]
+    }
+  },
+  computed: {
+    displayComments() {
+      if (this.thread && Array.isArray(this.thread.comments)) {
+        return this.thread.comments
+      }
+      return this.mockComments
+    },
+    charCount() {
+      return this.commentBody.length
+    }
+  },
   methods: {
+    storeComment(){
+      this.$inertia.post('/threads/' +this.thread.id+'/comments/store', {
+        body : this.commentBody
+      })
+      this.commentBody = "";
+    },
     formatDate(dateString) {
       if (!dateString) return 'Unknown'
       

@@ -19,7 +19,7 @@ class ThreadController extends Controller
     public function show(Thread $thread)
     {
         return inertia("threads/show", [
-            'thread' => $thread->load('category')
+            'thread' => $thread->load('category', 'comments.user')
         ]);
     }
 

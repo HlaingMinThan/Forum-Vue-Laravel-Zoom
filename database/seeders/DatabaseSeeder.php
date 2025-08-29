@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Tag;
 use App\Models\Thread;
 use App\Models\User;
@@ -81,8 +82,10 @@ class DatabaseSeeder extends Seeder
             Tag::create($tagData);
         }
 
-        Thread::factory(10)->create([
-            'category_id' => rand(1, 5)
-        ]);
+        Thread::factory(10)
+            ->has(Comment::factory()->count(3))
+            ->create([
+                'category_id' => rand(1, 5)
+            ]);
     }
 }

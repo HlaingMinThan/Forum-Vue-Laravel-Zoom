@@ -52,4 +52,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Thread::class);
     }
+
+    // a user hasMany comments
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

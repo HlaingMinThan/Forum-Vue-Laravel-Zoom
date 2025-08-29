@@ -22,6 +22,13 @@ class Thread extends Model
         return $this->belongsTo(Category::class);
     }
 
+    // a thread hasmany comments
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+
     // a thread belongsToMany tags
     public function tags()
     {
