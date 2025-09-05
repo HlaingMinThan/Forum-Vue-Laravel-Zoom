@@ -14,7 +14,16 @@ class ThreadController extends Controller
         //     return $thread;
         // }));
         return inertia('Home', [
-            'threads' => Inertia::deepMerge(Thread::with('category', 'user')->filter(request(['category', 'tag', 'search']))->latest()->paginate(5))
+            'threads' => Inertia::deepMerge(
+                Thread::with('category', 'user')
+                    ->filter(request(['category', 'tag', 'search', 'popular', 'followed']))
+                    ->latest()
+                    ->paginate(5)
+                    ->through(function ($thread) {
+                        $thread->threadActionAuthorize = auth()->user()?->can('threadActionAuthorize', $thread);
+                        return $thread;
+                    })
+            )
         ]);
     }
 

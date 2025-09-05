@@ -10,7 +10,8 @@ class UserController extends Controller
     public function show(User $user)
     {
         return inertia('Profile/show', [
-            'user' => $user
+            'user' => $user,
+            'already_followed' => auth()->user()->alreadyFollowed($user)
         ]);
     }
 }

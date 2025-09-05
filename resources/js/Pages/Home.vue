@@ -5,10 +5,10 @@
               <div class="flex items-center justify-between">
                 <h2 class="text-lg font-semibold text-gray-900">Recent Threads</h2>
                 <div class="flex items-center space-x-2">
-                  <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option>Latest</option>
-                    <option>Most Popular</option>
-                    <option>Most Replies</option>
+                  <select v-model="filter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="latest">Latest</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="followed">Followed Threads</option>
                   </select>
                 </div>
               </div>
@@ -179,9 +179,15 @@ export default {
   data() {
     return {
       showDeleteModal: false,
+      filter: 'latest',
       threadToDelete: null,
     }
   },
+  watch: {
+    filter() {
+      this.$inertia.get('/?filter='+this.filter)
+    }
+  }, 
   methods:{
     moment,
     openDeleteModal(thread){
@@ -198,10 +204,10 @@ export default {
     }
   },
   mounted(){
-    if(this.threads.current_page !== 1){
-      this.$inertia.visit(route('home'), { data: { page: 1 }, replace: true, only: ['threads'] })
+    // if(this.threads.current_page !== 1){
+    //   this.$inertia.visit(route('home'), { data: { page: 1 }, replace: true, only: ['threads'] })
 
-    }
+    // }
   }
 }
 </script>

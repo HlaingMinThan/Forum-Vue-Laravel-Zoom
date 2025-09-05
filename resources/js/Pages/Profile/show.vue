@@ -34,7 +34,10 @@
 
           <div class="flex items-center gap-3">
             <button class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50">Message</button>
-            <button class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Follow</button>
+            <Form :action="`/handle-follow/${user?.id}`" method="POST">
+              <button v-if="!already_followed" type="submit" class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Follow</button>
+              <button v-else type="submit" class="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700">Unfollow</button>
+              </Form>
           </div>
         </div>
 
@@ -137,12 +140,17 @@
 </template>
 
 <script>
+import { Form } from '@inertiajs/vue3';
 export default {
+  components: {Form},
   props: {
     user: {
       type: Object,
       required: false,
       default: () => ({})
+    },
+    already_followed: {
+      type: Boolean,
     },
     stats: {
       type: Object,

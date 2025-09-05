@@ -52,5 +52,16 @@ class Thread extends Model
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->where('title', 'like', '%' . $search . '%');
         });
+
+        $query->when(
+            request('filter') === 'popular',
+            fn($query) =>
+            $query->withCount('comments')->orderByDesc('comments_count')
+        );
+        $query->when(
+            request('filter') === 'followed',
+            fn($query) =>
+            $query->whereIn('user_id', auth()->user()->followers()->pluck('id'))
+        );
     }
 }
