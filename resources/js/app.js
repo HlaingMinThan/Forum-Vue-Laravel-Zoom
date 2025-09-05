@@ -7,6 +7,15 @@ import { createApp, h } from "vue";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy";
 import UserLayout from "./UserLayout.vue";
 
+import VueMarkdownEditor from "@kangc/v-md-editor";
+import "@kangc/v-md-editor/lib/style/base-editor.css";
+import vuepressTheme from "@kangc/v-md-editor/lib/theme/vuepress.js";
+import "@kangc/v-md-editor/lib/theme/style/vuepress.css";
+import enUS from "@kangc/v-md-editor/lib/lang/en-US";
+
+VueMarkdownEditor.lang.use("en-US", enUS);
+VueMarkdownEditor.use(vuepressTheme);
+
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
 createInertiaApp({
@@ -23,6 +32,7 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(VueMarkdownEditor)
             .mount(el);
     },
     progress: {

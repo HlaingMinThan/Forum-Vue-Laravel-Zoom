@@ -1,6 +1,6 @@
 <template>
   <!-- Threads Header -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6" v-if="threads?.data && threads.data.length > 0">
             <div class="px-6 py-4 border-b border-gray-200">
               <div class="flex items-center justify-between">
                 <h2 class="text-lg font-semibold text-gray-900">Recent Threads</h2>
@@ -15,10 +15,9 @@
             </div>
           </div>
 
-          <!-- Threads List -->
-          <div class="space-y-4">
-            <!-- Thread Item 1 -->
-            <div v-for="thread in threads" :key="thread.id" class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <!-- Threads List or Empty State -->
+          <div v-if="threads?.data && threads.data.length > 0" class="space-y-4">
+            <div v-for="thread in threads.data" :key="thread.id" class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
               <div class="p-6">
                 <div class="flex items-start space-x-4">
                   <div class="flex-shrink-0">
@@ -85,10 +84,43 @@
                 </div>
               </div>
             </div>
-
-        
           </div>
-
+          <div v-else class="bg-gradient-to-br from-white to-blue-50 border border-blue-100 rounded-xl shadow-sm">
+            <div class="px-8 py-12 text-center">
+              <div class="mx-auto mb-6 h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center">
+                <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 16.5a2.5 2.5 0 01-2.5 2.5H7l-4 3V5.5A2.5 2.5 0 015.5 3h13A2.5 2.5 0 0121 5.5v11z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-900">No threads yet</h3>
+              <p class="mt-2 text-gray-600">Be the first to start a conversation and kick things off.</p>
+              <div class="mt-6 flex items-center justify-center space-x-3">
+                <Link v-if="$page.props.auth?.user" :href="route('threads.create')" class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm">
+                  <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  New Thread
+                </Link>
+                <Link v-else :href="route('login')" class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-blue-700 bg-white hover:bg-gray-50 border border-blue-200">
+                  Sign in to post
+                </Link>
+              </div>
+            </div>
+          </div>
+          <WhenVisible
+            v-if="threads?.data && threads.data.length > 0"
+            :params="{
+              only : ['threads'],
+              data : {
+                page : threads.current_page + 1
+              }
+            }"
+            :always="this.threads.current_page < this.threads.last_page"
+          >
+            <template #fallback>
+              <span>loading....</span>
+            </template>
+          </WhenVisible>
           <!-- Delete Confirmation Modal -->
           <Modal :show="showDeleteModal" @close="closeDeleteModal">
             <div class="p-6">
@@ -128,34 +160,20 @@
             </div>
           </Modal>
 
-          <!-- Pagination -->
-          <div class="mt-8 flex items-center justify-between">
-            <div class="text-sm text-gray-500">
-              Showing 1 to 4 of 24 threads
-            </div>
-            <div class="flex items-center space-x-2">
-              <button class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">
-                Previous
-              </button>
-              <button class="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm">1</button>
-              <button class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">2</button>
-              <button class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">3</button>
-              <button class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">Next</button>
-            </div>
-          </div>
+
 </template>
 
 <script>
-import { Link } from '@inertiajs/vue3';
+import { Link, WhenVisible } from '@inertiajs/vue3';
 import Modal from '@/Components/Modal.vue';
 import moment from 'moment';
 
 export default {
-  components:{Link, Modal},
+  components:{Link, Modal,WhenVisible},
   name: 'Home',
   props : {
     threads : {
-      type : Array
+      type : Object
     }
   },
   data() {
@@ -180,7 +198,10 @@ export default {
     }
   },
   mounted(){
-    console.log(this.threads);
+    if(this.threads.current_page !== 1){
+      this.$inertia.visit(route('home'), { data: { page: 1 }, replace: true, only: ['threads'] })
+
+    }
   }
 }
 </script>
@@ -188,6 +209,7 @@ export default {
 <style scoped>
 .line-clamp-2 {
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;

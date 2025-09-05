@@ -12,7 +12,7 @@ use Inertia\Inertia;
 Route::get('/', [ThreadController::class, 'index'])->name('home');
 Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
 Route::get('/threads/{thread}', [ThreadController::class, 'show'])->name('threads.show');
-Route::get('/new-thread', [ThreadController::class, 'create']);
+Route::get('/new-thread', [ThreadController::class, 'create'])->name("threads.create");
 Route::get('/threads/{thread}/edit', [ThreadController::class, 'edit'])->name('threads.edit');
 Route::put('/threads/{thread}/update', [ThreadController::class, 'update'])->name('threads.update');
 Route::post('/threads', [ThreadController::class, 'store']);
