@@ -27,7 +27,7 @@
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center space-x-2 mb-2">
-                      <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">{{thread.category?.name}}</span>
+                      <span v-if="thread.category" class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">{{thread.category?.name}}</span>
                       <span class="text-sm text-gray-500">{{ moment(thread.created_at,"YYYYMMDD").fromNow() }}</span>
                     </div>
                     <Link :href="route('threads.show',thread.id)" class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer">
@@ -174,12 +174,15 @@ export default {
   props : {
     threads : {
       type : Object
+    },
+    my_filter : {
+      type : String
     }
   },
   data() {
     return {
       showDeleteModal: false,
-      filter: 'latest',
+      filter: this.my_filter ?? 'latest',
       threadToDelete: null,
     }
   },
@@ -204,10 +207,13 @@ export default {
     }
   },
   mounted(){
-    // if(this.threads.current_page !== 1){
-    //   this.$inertia.visit(route('home'), { data: { page: 1 }, replace: true, only: ['threads'] })
-
-    // }
+    if (this.threads.current_page !== 1) {
+      this.$inertia.visit(route('home'), {
+        data: { page: 1 },
+        replace: true,
+        only: ['threads','my_filter'],
+      });
+    }
   }
 }
 </script>

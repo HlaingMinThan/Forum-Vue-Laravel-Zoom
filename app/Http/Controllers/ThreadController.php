@@ -22,8 +22,9 @@ class ThreadController extends Controller
                     ->through(function ($thread) {
                         $thread->threadActionAuthorize = auth()->user()?->can('threadActionAuthorize', $thread);
                         return $thread;
-                    })
-            )
+                    }),
+            ),
+            'my_filter' => request('filter'),
         ]);
     }
 

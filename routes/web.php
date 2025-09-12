@@ -36,7 +36,12 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin', [AdminController::class, 'index']);
-    Route::get('/admin/categories', [CategoryController::class, 'index']);
+    Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/admin/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+    Route::post('/admin/categories/store', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/admin/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/admin/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
 });
 
 require __DIR__ . '/auth.php';

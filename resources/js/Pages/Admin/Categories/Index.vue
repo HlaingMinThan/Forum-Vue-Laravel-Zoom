@@ -1,6 +1,11 @@
 <template>
   <div class="space-y-6">
-    <h1 class="text-2xl font-semibold">Categories</h1>
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-semibold">Categories</h1>
+      <div>
+        <Link :href="route('categories.create')" @click="deleteCategory(cat.id)" class="bg-blue-500 px-4 py-2 text-white rounded-2xl">Create</Link>
+      </div>
+    </div>
 
     <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
       <div class="px-6 py-4 border-b bg-gray-50">
@@ -27,6 +32,7 @@
               <th class="px-6 py-3 font-medium">Slug</th>
               <th class="px-6 py-3 font-medium">Threads</th>
               <th class="px-6 py-3 font-medium">Created</th>
+              <th class="px-6 py-3 font-medium">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y">
@@ -43,6 +49,10 @@
               <td class="px-6 py-4 text-gray-600 text-sm">
                 {{ formatDate(cat.created_at) }}
               </td>
+              <td class="px-6 py-4 text-gray-600 text-sm space-x-4">
+                <Link :href="route('categories.edit',cat.id)"  class="bg-blue-500 px-3 py-2 text-white rounded-2xl">edit</Link>
+                <button @click="deleteCategory(cat.id)" class="bg-red-500 px-2 py-1 text-white rounded-2xl">delete</button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -52,11 +62,17 @@
 </template>
 
 <script>
+import { Link } from '@inertiajs/vue3';
+
 export default {
+  components: {Link},
   methods: {
     formatDate(value) {
       if (!value) return '-';
       try { return new Date(value).toLocaleString(); } catch { return String(value); }
+    },
+    deleteCategory(id){
+      return this.$inertia.delete(route('categories.destroy',id))
     }
   }
 }
