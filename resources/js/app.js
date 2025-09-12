@@ -6,6 +6,7 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createApp, h } from "vue";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy";
 import UserLayout from "./UserLayout.vue";
+import AdminLayout from "./AdminLayout.vue";
 
 import VueMarkdownEditor from "@kangc/v-md-editor";
 import "@kangc/v-md-editor/lib/style/base-editor.css";
@@ -23,6 +24,10 @@ createInertiaApp({
     resolve: (name) => {
         const pages = import.meta.glob("./Pages/**/*.vue", { eager: true });
         let page = pages[`./Pages/${name}.vue`];
+        if (window.location.pathname.startsWith("/admin")) {
+            page.default.layout = AdminLayout;
+            return page;
+        }
         if (page && page.default && page.default.layout === undefined) {
             page.default.layout = UserLayout;
         }
