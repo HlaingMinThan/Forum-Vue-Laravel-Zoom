@@ -209,9 +209,21 @@ export default {
         async submit() {
             if (this.processing) return;
             this.processing = true;
+            const method = this.isEdit ? "put" : "post";
+            const url = this.isEdit
+                ? route("users.update", this.user.id)
+                : route("users.store");
             try {
-                // Backend store/update routes are not defined yet.
-                // Left intentionally as a no-op to focus on design.
+                await this.$inertia[method](
+                    url,
+                    {
+                        name: this.name,
+                        email: this.email,
+                        password: this.password,
+                        password_confirmation: this.passwordConfirmation,
+                    },
+                    { preserveScroll: true }
+                );
             } finally {
                 this.processing = false;
             }

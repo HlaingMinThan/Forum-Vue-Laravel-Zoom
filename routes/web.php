@@ -48,6 +48,8 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     // Alias to support plural URL as well
     Route::get('/admin/users/create', [UserController::class, 'create']);
     Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::post('/admin/users/store', [UserController::class, 'store'])->name('users.store');
+    Route::put('/admin/users/{user}/update', [UserController::class, 'update'])->name('users.update');
 });
 
 require __DIR__ . '/auth.php';
