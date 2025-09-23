@@ -140,6 +140,8 @@
                         id="show_password"
                         type="checkbox"
                         v-model="showPassword"
+                        :true-value="true"
+                        :false-value="false"
                         class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                     />
                     <label for="show_password" class="text-sm text-gray-700"
