@@ -16,11 +16,13 @@ class UserController extends Controller
         ]);
     }
 
+    // Render the admin user creation form
     public function create()
     {
         return inertia('Admin/Users/UserForm');
     }
 
+    // Render the admin user edit form with the selected user
     public function edit(User $user)
     {
         return inertia('Admin/Users/UserForm', [
@@ -28,6 +30,7 @@ class UserController extends Controller
         ]);
     }
 
+    // Handle creation of a new user from the admin form
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -42,6 +45,7 @@ class UserController extends Controller
         return redirect()->route('users.edit', $user)->with('success', 'User created.');
     }
 
+    // Handle updating an existing user from the admin form
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([

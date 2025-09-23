@@ -38,6 +38,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'categories' => Category::all(),
             'tags' => Tag::all(),
+            // Share flash messages globally so layouts can show success/error notices
             'flash' => [
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),

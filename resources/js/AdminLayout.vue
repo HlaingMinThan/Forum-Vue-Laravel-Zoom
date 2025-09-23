@@ -20,6 +20,7 @@
         </aside>
         <main class="flex-1">
             <section class="max-w-7xl mx-auto px-4 py-6">
+                <!-- Global success flash rendered from Inertia shared props -->
                 <transition name="fade">
                     <div
                         v-if="$page.props.flash && $page.props.flash.success"

@@ -2,6 +2,7 @@
     <div class="max-w-3xl mx-auto space-y-6">
         <div class="flex items-center justify-between">
             <div>
+                <!-- Page heading switches by create/edit mode -->
                 <h1 class="text-2xl font-semibold text-gray-900">
                     {{ isEdit ? "Edit user" : "Create user" }}
                 </h1>
@@ -21,6 +22,7 @@
             </div>
 
             <form @submit.prevent="submit" class="p-6 space-y-6">
+                <!-- Name -->
                 <div>
                     <label
                         for="name"
@@ -47,6 +49,7 @@
                     </p>
                 </div>
 
+                <!-- Email -->
                 <div>
                     <label
                         for="email"
@@ -73,6 +76,7 @@
                     </p>
                 </div>
 
+                <!-- Role select (maps to is_admin boolean) -->
                 <div>
                     <label
                         for="role"
@@ -100,6 +104,7 @@
                     </p>
                 </div>
 
+                <!-- Password + confirmation -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <div class="flex items-center justify-between">
@@ -162,6 +167,7 @@
                     </div>
                 </div>
 
+                <!-- Show/hide password toggle -->
                 <div class="flex items-center gap-2">
                     <input
                         id="show_password"
@@ -176,6 +182,7 @@
                     >
                 </div>
 
+                <!-- Actions -->
                 <div class="pt-4 flex items-center justify-end gap-3 border-t">
                     <Link
                         href="/admin"
@@ -209,6 +216,7 @@ import { Link } from "@inertiajs/vue3";
 export default {
     components: { Link },
     props: {
+        // When editing, the server injects the selected user as a prop
         user: {
             type: Object,
             default: null,
@@ -216,6 +224,7 @@ export default {
     },
     data() {
         return {
+            // Form state
             name: this.user?.name ?? "",
             email: this.user?.email ?? "",
             isAdmin: Boolean(this.user?.is_admin ?? false),
@@ -223,19 +232,23 @@ export default {
             passwordConfirmation: "",
             showPassword: false,
             processing: false,
+            // Local client-side validation errors (merged with server errors)
             localErrors: {},
         };
     },
     computed: {
+        // Detect create vs edit mode
         isEdit() {
             return Boolean(this.user && this.user.id);
         },
+        // Merge server-side validation errors with local client-side errors
         errors() {
             const serverErrors = this.$page?.props?.errors ?? {};
             return { ...serverErrors, ...this.localErrors };
         },
     },
     methods: {
+        // Lightweight client-side validation mirroring server rules
         validateForm() {
             const errors = {};
 
@@ -284,6 +297,7 @@ export default {
             this.localErrors = errors;
             return Object.keys(errors).length === 0;
         },
+        // Submit to server (create or update) with Inertia
         async submit() {
             if (this.processing) return;
             this.processing = true;
