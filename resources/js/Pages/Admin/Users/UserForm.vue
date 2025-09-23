@@ -73,6 +73,33 @@
                     </p>
                 </div>
 
+                <div>
+                    <label
+                        for="role"
+                        class="block text-sm font-medium text-gray-700"
+                        >Role</label
+                    >
+                    <select
+                        id="role"
+                        v-model="isAdmin"
+                        class="mt-2 block w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                        :aria-invalid="Boolean(errors.is_admin)"
+                        :aria-describedby="
+                            errors.is_admin ? 'role-error' : undefined
+                        "
+                    >
+                        <option :value="false">User</option>
+                        <option :value="true">Admin</option>
+                    </select>
+                    <p
+                        v-if="errors.is_admin"
+                        id="role-error"
+                        class="mt-2 text-sm text-red-600"
+                    >
+                        {{ errors.is_admin }}
+                    </p>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <div class="flex items-center justify-between">
@@ -191,6 +218,7 @@ export default {
         return {
             name: this.user?.name ?? "",
             email: this.user?.email ?? "",
+            isAdmin: Boolean(this.user?.is_admin ?? false),
             password: "",
             passwordConfirmation: "",
             showPassword: false,
@@ -228,6 +256,10 @@ export default {
             } else if (trimmedEmail.length > 255) {
                 errors.email =
                     "The email may not be greater than 255 characters.";
+            }
+
+            if (this.isAdmin !== true && this.isAdmin !== false) {
+                errors.is_admin = "Please select a role.";
             }
 
             const hasPassword = (this.password || "").length > 0;
@@ -269,6 +301,7 @@ export default {
                     {
                         name: this.name,
                         email: this.email,
+                        is_admin: this.isAdmin,
                         password: this.password,
                         password_confirmation: this.passwordConfirmation,
                     },
