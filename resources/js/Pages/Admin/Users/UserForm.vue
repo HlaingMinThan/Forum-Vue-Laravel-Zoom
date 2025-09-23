@@ -3,13 +3,13 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-semibold text-gray-900">
-                    {{ isEdit ? "Edit category" : "Create category" }}
+                    {{ isEdit ? "Edit user" : "Create user" }}
                 </h1>
                 <p class="mt-1 text-sm text-gray-500">
                     {{
                         isEdit
                             ? "Update the fields below."
-                            : "Fill in the details to create a new category."
+                            : "Fill in the details to create a new user."
                     }}
                 </p>
             </div>
@@ -17,7 +17,7 @@
 
         <div class="bg-white rounded-xl border shadow-sm">
             <div class="px-6 py-4 border-b bg-gray-50 rounded-t-xl">
-                <div class="font-medium text-gray-900">Category details</div>
+                <div class="font-medium text-gray-900">User details</div>
             </div>
 
             <form @submit.prevent="submit" class="p-6 space-y-6">
@@ -31,7 +31,7 @@
                         id="name"
                         type="text"
                         v-model.trim="name"
-                        placeholder="e.g. Announcements"
+                        placeholder="e.g. Jane Doe"
                         class="mt-2 block w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
                         :aria-invalid="Boolean(errors.name)"
                         :aria-describedby="
@@ -48,49 +48,108 @@
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between">
-                        <label
-                            for="description"
-                            class="block text-sm font-medium text-gray-700"
-                            >Description</label
-                        >
-                        <span class="text-xs text-gray-500">Required</span>
-                    </div>
-                    <textarea
-                        id="description"
-                        v-model.trim="description"
-                        rows="5"
-                        placeholder="What belongs in this category?"
+                    <label
+                        for="email"
+                        class="block text-sm font-medium text-gray-700"
+                        >Email</label
+                    >
+                    <input
+                        id="email"
+                        type="email"
+                        v-model.trim="email"
+                        placeholder="jane@example.com"
                         class="mt-2 block w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                        :aria-invalid="Boolean(errors.description)"
+                        :aria-invalid="Boolean(errors.email)"
                         :aria-describedby="
-                            errors.description ? 'description-error' : undefined
+                            errors.email ? 'email-error' : undefined
                         "
                     />
                     <p
-                        v-if="errors.description"
-                        id="description-error"
+                        v-if="errors.email"
+                        id="email-error"
                         class="mt-2 text-sm text-red-600"
                     >
-                        {{ errors.description }}
+                        {{ errors.email }}
                     </p>
                 </div>
 
-                <div class="pt-2">
-                    <div class="text-sm text-gray-500">
-                        <span class="font-medium text-gray-700"
-                            >Slug preview:</span
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <label
+                                for="password"
+                                class="block text-sm font-medium text-gray-700"
+                                >Password</label
+                            >
+                            <span class="text-xs text-gray-500">{{
+                                isEdit ? "Optional" : "Required"
+                            }}</span>
+                        </div>
+                        <input
+                            id="password"
+                            :type="showPassword ? 'text' : 'password'"
+                            v-model="password"
+                            placeholder="••••••••"
+                            class="mt-2 block w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                            :aria-invalid="Boolean(errors.password)"
+                            :aria-describedby="
+                                errors.password ? 'password-error' : undefined
+                            "
+                        />
+                        <p
+                            v-if="errors.password"
+                            id="password-error"
+                            class="mt-2 text-sm text-red-600"
                         >
-                        <span
-                            class="ml-2 inline-flex items-center rounded-full bg-indigo-50 text-indigo-700 px-2 py-0.5 text-xs font-medium"
-                            >/{{ slugPreview }}</span
-                        >
+                            {{ errors.password }}
+                        </p>
                     </div>
+                    <div>
+                        <label
+                            for="password_confirmation"
+                            class="block text-sm font-medium text-gray-700"
+                            >Confirm password</label
+                        >
+                        <input
+                            id="password_confirmation"
+                            :type="showPassword ? 'text' : 'password'"
+                            v-model="passwordConfirmation"
+                            placeholder="••••••••"
+                            class="mt-2 block w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                            :aria-invalid="
+                                Boolean(errors.password_confirmation)
+                            "
+                            :aria-describedby="
+                                errors.password_confirmation
+                                    ? 'password_confirmation-error'
+                                    : undefined
+                            "
+                        />
+                        <p
+                            v-if="errors.password_confirmation"
+                            id="password_confirmation-error"
+                            class="mt-2 text-sm text-red-600"
+                        >
+                            {{ errors.password_confirmation }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <input
+                        id="show_password"
+                        type="checkbox"
+                        v-model="showPassword"
+                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <label for="show_password" class="text-sm text-gray-700"
+                        >Show password</label
+                    >
                 </div>
 
                 <div class="pt-4 flex items-center justify-end gap-3 border-t">
                     <Link
-                        :href="route('categories.index')"
+                        href="/admin"
                         class="px-4 py-2 rounded-xl border text-gray-700 hover:bg-gray-50"
                         >Cancel</Link
                     >
@@ -121,54 +180,36 @@ import { Link } from "@inertiajs/vue3";
 export default {
     components: { Link },
     props: {
-        category: {
+        user: {
             type: Object,
             default: null,
         },
     },
     data() {
         return {
-            name: this.category?.name ?? "",
-            description: this.category?.description ?? "",
+            name: this.user?.name ?? "",
+            email: this.user?.email ?? "",
+            password: "",
+            passwordConfirmation: "",
+            showPassword: false,
             processing: false,
         };
     },
     computed: {
         isEdit() {
-            return Boolean(this.category && this.category.id);
+            return Boolean(this.user && this.user.id);
         },
         errors() {
             return this.$page?.props?.errors ?? {};
-        },
-        slugPreview() {
-            const text = (this.name || "").toString().trim().toLowerCase();
-            return text
-                .normalize("NFD")
-                .replace(/\p{Diacritic}/gu, "")
-                .replace(/[^a-z0-9\s-]/g, "")
-                .trim()
-                .replace(/\s+/g, "-")
-                .replace(/-+/g, "-");
         },
     },
     methods: {
         async submit() {
             if (this.processing) return;
             this.processing = true;
-            const method = this.isEdit ? "put" : "post";
-            const url = this.isEdit
-                ? route("categories.update", this.category.id)
-                : route("categories.store");
-
             try {
-                await this.$inertia[method](
-                    url,
-                    {
-                        name: this.name,
-                        description: this.description,
-                    },
-                    { preserveScroll: true }
-                );
+                // Backend store/update routes are not defined yet.
+                // Left intentionally as a no-op to focus on design.
             } finally {
                 this.processing = false;
             }

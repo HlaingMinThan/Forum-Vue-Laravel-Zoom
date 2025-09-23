@@ -14,4 +14,16 @@ class UserController extends Controller
             'already_followed' => auth()->user()->alreadyFollowed($user)
         ]);
     }
+
+    public function create()
+    {
+        return inertia('Admin/Users/UserForm');
+    }
+
+    public function edit(User $user)
+    {
+        return inertia('Admin/Users/UserForm', [
+            'user' => $user,
+        ]);
+    }
 }

@@ -45,6 +45,8 @@ Route::middleware(AdminMiddleware::class)->group(function () {
 
     // Admin Users - routes for create and edit forms only
     Route::get('/admin/user/create', [UserController::class, 'create'])->name('users.create');
+    // Alias to support plural URL as well
+    Route::get('/admin/users/create', [UserController::class, 'create']);
     Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
 });
 
