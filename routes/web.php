@@ -42,6 +42,10 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/admin/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/admin/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+    // Admin Users - routes for create and edit forms only
+    Route::get('/admin/user/create', [UserController::class, 'create'])->name('users.create');
+    Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
 });
 
 require __DIR__ . '/auth.php';
