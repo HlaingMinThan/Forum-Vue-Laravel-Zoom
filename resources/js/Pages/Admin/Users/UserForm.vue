@@ -195,6 +195,7 @@ export default {
             passwordConfirmation: "",
             showPassword: false,
             processing: false,
+            localErrors: {},
         };
     },
     computed: {
@@ -202,13 +203,62 @@ export default {
             return Boolean(this.user && this.user.id);
         },
         errors() {
-            return this.$page?.props?.errors ?? {};
+            const serverErrors = this.$page?.props?.errors ?? {};
+            return { ...serverErrors, ...this.localErrors };
         },
     },
     methods: {
+        validateForm() {
+            const errors = {};
+
+            const trimmedName = (this.name || "").toString().trim();
+            if (!trimmedName) {
+                errors.name = "The name field is required.";
+            } else if (trimmedName.length > 255) {
+                errors.name =
+                    "The name may not be greater than 255 characters.";
+            }
+
+            const trimmedEmail = (this.email || "").toString().trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+            if (!trimmedEmail) {
+                errors.email = "The email field is required.";
+            } else if (!emailRegex.test(trimmedEmail)) {
+                errors.email = "The email must be a valid email address.";
+            } else if (trimmedEmail.length > 255) {
+                errors.email =
+                    "The email may not be greater than 255 characters.";
+            }
+
+            const hasPassword = (this.password || "").length > 0;
+            if (!this.isEdit) {
+                if (!hasPassword) {
+                    errors.password = "The password field is required.";
+                }
+            }
+            if (hasPassword && (this.password || "").length < 8) {
+                errors.password = "The password must be at least 8 characters.";
+            }
+            if (
+                (this.password || "").length > 0 ||
+                (this.passwordConfirmation || "").length > 0
+            ) {
+                if (this.password !== this.passwordConfirmation) {
+                    errors.password_confirmation =
+                        "The password confirmation does not match.";
+                }
+            }
+
+            this.localErrors = errors;
+            return Object.keys(errors).length === 0;
+        },
         async submit() {
             if (this.processing) return;
             this.processing = true;
+            if (!this.validateForm()) {
+                this.processing = false;
+                return;
+            }
             const method = this.isEdit ? "put" : "post";
             const url = this.isEdit
                 ? route("users.update", this.user.id)
