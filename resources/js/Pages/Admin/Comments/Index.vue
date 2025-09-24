@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { Link, usePage } from "@inertiajs/vue3";
+import { Link, usePage, router } from "@inertiajs/vue3";
 import VueMarkdown from "vue-markdown-render";
 
 const formatDate = (date) => {
@@ -117,6 +117,9 @@ const formatDate = (date) => {
 
 const deleteComment = (id) => {
     if (confirm("Are you sure you want to delete this comment?")) {
+        router.delete(route("comments.destroy", id), {
+            preserveScroll: true,
+        });
     }
 };
 </script>
