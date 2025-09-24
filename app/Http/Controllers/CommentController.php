@@ -9,6 +9,21 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+        public function index()
+        {
+        $comments = Comment::with(['user', 'thread'])->latest()->get();
+        return inertia('Admin/Comments/Index', [
+            'comments' => $comments->map(function($comment) {
+                return [
+                    'id' => $comment->id,
+                    'author_name' => $comment->user ? $comment->user->name : 'Unknown',
+                    'thread_title' => $comment->thread ? $comment->thread->title : 'N/A',
+                    'content' => $comment->body,
+                    'created_at' => $comment->created_at,
+                ];
+            })
+        ]);
+        }
     public function store(Thread $thread)
     {
         request()->validate([
