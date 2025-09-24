@@ -78,7 +78,7 @@
                                 <span
                                     class="inline-flex items-center rounded-md bg-gray-50 text-gray-700 px-2 py-1 text-xs font-normal"
                                 >
-                                    {{ comment.content }}
+                                    <VueMarkdown :source="comment.content" />
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-gray-600 text-sm">
@@ -109,15 +109,14 @@
 
 <script setup>
 import { Link, usePage } from "@inertiajs/vue3";
+import VueMarkdown from "vue-markdown-render";
 
 const formatDate = (date) => {
     return new Date(date).toLocaleDateString();
 };
 
 const deleteComment = (id) => {
-    // Implement delete logic here
     if (confirm("Are you sure you want to delete this comment?")) {
-        // Call API or Inertia delete route
     }
 };
 </script>
