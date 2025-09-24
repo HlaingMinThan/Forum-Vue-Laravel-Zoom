@@ -14,4 +14,10 @@ class AdminUserController extends Controller
             ->get();
         return inertia('Admin/Users/Index', ['users'=>$users]);
     }
+
+    public function destroy(User $user)
+    {
+        $user->delete();
+        return back();
+    }
 }

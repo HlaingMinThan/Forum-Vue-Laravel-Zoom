@@ -44,6 +44,8 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::put('/admin/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/admin/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
     Route::get('/admin/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::delete('/admin/users/{user}/destroy', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
 
 });
 
