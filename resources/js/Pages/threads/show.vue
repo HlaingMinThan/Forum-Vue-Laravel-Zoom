@@ -134,7 +134,7 @@
           <div v-if="thread.comments?.length === 0" class="p-6 text-center text-gray-500">
             No comments yet. Be the first to share your thoughts!
           </div>
-          <div v-for="comment in comments" :key="comment.id" class="p-6">
+          <div v-for="comment in comments" :key="comment.id" class="p-6" :id="'comment-' + comment.id">
             <div class="flex items-start space-x-4">
               <div class="flex-shrink-0">
                 <Link :href="route('users.show',comment.user.id)" class="w-10 h-10 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center font-semibold">

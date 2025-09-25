@@ -8,6 +8,9 @@
               <h1 class="text-2xl font-bold text-gray-900">Creative Coder</h1>
             </Link>
             <div class="flex items-center space-x-4">
+              <template  v-if="$page.props.auth.user">
+                <Notification/>
+              </template>
               <!-- only after login -->
               <Link v-if="$page.props.auth.user" href="/new-thread" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                 New Thread
@@ -103,11 +106,12 @@
   
   <script>
 import { Link } from '@inertiajs/vue3';
+import Notification from './Components/Notification.vue';
 
   
   export default {
     name: 'Home',
-    components : {Link},
+    components : {Link,Notification},
     props : {
       threads : {
         type : Array
