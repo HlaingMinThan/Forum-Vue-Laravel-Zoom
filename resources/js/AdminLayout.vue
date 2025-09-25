@@ -26,7 +26,7 @@
 
 <script>
  import { Link } from '@inertiajs/vue3';
- 
+
  export default {
    components: {Link},
    data() {
@@ -37,6 +37,7 @@
          { title: 'Categories', href: '/admin/categories' },
          { title: 'Comments', href: '/admin/comments' },
          { title: 'Threads', href: '/admin/threads' },
+         { title: 'Tags', href: '/admin/tags'}
        ]
     }
    },
