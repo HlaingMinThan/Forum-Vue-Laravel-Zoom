@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
@@ -42,6 +43,12 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/admin/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/admin/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+    //adding tags routes
+    Route::get('/admin/tags',[TagController::class,'index'])->name('admin.tags');
+    Route::post('/admin/tag/store',[TagController::class,'store'])->name('tag.store');
+    Route::put('/admin/tag/{tag}/update',[TagController::class,'update'])->name('tag.update');
+    Route::delete('/admin/tag/{tag}/delete',[TagController::class,'delete'])->name('tag.delete');
 });
 
 require __DIR__ . '/auth.php';
