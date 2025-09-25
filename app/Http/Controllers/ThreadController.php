@@ -110,4 +110,9 @@ class ThreadController extends Controller
         ]);
     }
 
+    public function AdminDestroy(Thread $thread){
+        $thread->delete();
+        return back();
+    }
+
 }

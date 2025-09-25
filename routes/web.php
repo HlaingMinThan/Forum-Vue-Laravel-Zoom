@@ -44,6 +44,7 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::delete('/admin/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
     Route::get('/admin/threads' , [ThreadController::class, 'adminIndex'])->name('admin.threads.index');
     Route::get('/admin/threads/{thread}/show' , [ThreadController::class, 'adminShow'])->name('admin.threads.show');
+    Route::delete('admin/threads/{thread}/delete', [ThreadController::class, 'adminDestroy'])->name('admin.threads.destroy');
 
 });
 
