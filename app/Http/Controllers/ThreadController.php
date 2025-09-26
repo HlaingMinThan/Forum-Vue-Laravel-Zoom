@@ -70,7 +70,7 @@ class ThreadController extends Controller
 
         $thread->tags()->detach(); //delete all thread's tags in pivot table first
         $thread->tags()->attach(request('tag_ids')); // and add all user selected tags
-        return redirect('/');
+        return redirect(request('redirect_to', '/'));
     }
     public function store()
     {
@@ -88,7 +88,7 @@ class ThreadController extends Controller
         $thread->user_id = auth()->id();
         $thread->save();
         $thread->tags()->attach(request('tag_ids'));
-        return redirect('/');
+        return redirect(request('redirect_to', '/'));
     }
 
     public function destroy(Thread $thread)

@@ -42,6 +42,9 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/admin/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/admin/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::get('/admin/threads/{thread}/edit', [ThreadController::class, 'edit'])->name('admin.threads.edit');
+
+
 });
 
 require __DIR__ . '/auth.php';
