@@ -6,6 +6,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ThreadController;
+use App\Http\Controllers\ThreadLikeController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Models\Thread;
@@ -43,5 +44,13 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::put('/admin/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/admin/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
 });
+
+//for like
+Route::post('/threads/{thread}/likes', [ThreadController::class, 'like'])
+    ->name('threads.likes.like');
+
+Route::delete('/threads/{thread}/likes', [ThreadController::class, 'unlike'])
+    ->name('threads.likes.unlike');
+
 
 require __DIR__ . '/auth.php';
