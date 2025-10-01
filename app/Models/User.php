@@ -66,6 +66,13 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'followers', 'user_id', 'follow_id');
     }
 
+    //a user likeThreads belongsToMany thread
+    public function likedThreads()
+    {
+        return $this->belongsToMany(Thread::class,'thread_user');
+    }
+    
+
     public function follow($userId)
     {
         return $this->followers()->attach($userId);
