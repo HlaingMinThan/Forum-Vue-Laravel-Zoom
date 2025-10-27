@@ -49,6 +49,7 @@ export default {
                 { title: "Categories", href: "/admin/categories" },
                 { title: "Comments", href: "/admin/comments" },
                 { title: "Threads", href: "/admin/threads" },
+                { title: "Tags", href: "/admin/tags" },
             ],
         };
     },
