@@ -45,6 +45,11 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/admin/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/admin/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
+     // Admin comment routes
+    Route::get('/admin/comments', [CommentController::class, 'index'])->name('comments.index');
+    Route::get('/admin/comments/{comment}/edit', [CommentController::class, 'edit'])->name('comments.edit');
+    Route::put('/admin/comments/{comment}/update', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/admin/comments/{comment}/destroy', [CommentController::class, 'destroy'])->name('comments.destroy');
 
     //adding tags routes
     Route::get('/admin/tags',[TagController::class,'index'])->name('admin.tags');
