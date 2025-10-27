@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Thread;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ThreadController extends Controller
 {
@@ -34,6 +36,9 @@ class ThreadController extends Controller
             'thread' => function () use ($thread) {
                 return $thread->load(['category', 'user']);
             },
+            'initialLiked' => auth()->check()
+                ? $thread->likedBy()->where('user_id', auth()->id())->exists()
+                : false,
             'comments' => fn() => $thread->comments()->with('user')->latest()->get()->map(function ($comment) {
                 $comment->commentActionAuthorize = auth()->user()?->can('commentActionAuthorize', $comment);
                 return $comment;
@@ -70,7 +75,7 @@ class ThreadController extends Controller
 
         $thread->tags()->detach(); //delete all thread's tags in pivot table first
         $thread->tags()->attach(request('tag_ids')); // and add all user selected tags
-        return redirect('/');
+        return redirect(route('admin.threads.index'));
     }
     public function store()
     {
@@ -88,12 +93,48 @@ class ThreadController extends Controller
         $thread->user_id = auth()->id();
         $thread->save();
         $thread->tags()->attach(request('tag_ids'));
-        return redirect('/');
+        return redirect(request('redirect_to', '/'));
     }
 
     public function destroy(Thread $thread)
     {
         $thread->delete();
+        return back();
+    }
+
+    public function adminIndex()
+    {
+        return inertia('Admin/Threads/Index', [
+            'threads' => Thread::with('user', 'category')->latest()->get(),
+        ]);
+    }
+
+    public function adminShow(Thread $thread)
+    {
+        $thread->load(['user', 'category', 'tags']);
+        return inertia('Admin/Threads/Show', [
+            'thread' => $thread,
+        ]);
+    }
+
+    public function AdminDestroy(Thread $thread)
+    {
+        $thread->delete();
+        return back();
+    }
+
+    //for like function    
+    public function like(Thread $thread)
+    {
+        $thread->likedBy()->syncWithoutDetaching([Auth::id()]);
+
+        return back();
+    }
+
+    public function unlike(Thread $thread)
+    {
+        $thread->likedBy()->detach(Auth::id());
+
         return back();
     }
 }

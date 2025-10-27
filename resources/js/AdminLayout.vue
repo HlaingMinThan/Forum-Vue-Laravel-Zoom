@@ -25,27 +25,28 @@
 </template>
 
 <script>
- import { Link } from '@inertiajs/vue3';
- 
- export default {
-   components: {Link},
-   data() {
-    return {
-      navItems : [
-         { title: 'Dashboard', href: '/admin' },
-         { title: 'Users', href: '/admin/users' },
-         { title: 'Categories', href: '/admin/categories' },
-         { title: 'Comments', href: '/admin/comments' },
-         { title: 'Threads', href: '/admin/threads' },
-       ]
-    }
-   },
-  computed: {
-    currrentPath(){
-      return this.$page.url;
-    }
-  }
- }
+import { Link } from "@inertiajs/vue3";
+
+export default {
+    components: { Link },
+    data() {
+        return {
+            navItems: [
+                { title: "Dashboard", href: "/admin" },
+                { title: "Users", href: "/admin/users" },
+                { title: "Categories", href: "/admin/categories" },
+                { title: "Comments", href: "/admin/comments" },
+                { title: "Threads", href: "/admin/threads" },
+                { title: "Tags", href: "/admin/tags" },
+            ],
+        };
+    },
+    computed: {
+        currrentPath() {
+            return this.$page.url;
+        },
+    },
+};
 </script>
 
 <style>
