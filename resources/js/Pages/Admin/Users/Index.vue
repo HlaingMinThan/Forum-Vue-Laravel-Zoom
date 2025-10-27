@@ -1,31 +1,26 @@
 <template>
     <div class="space-y-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-semibold">Categories</h1>
+            <h1 class="text-2xl font-semibold">Users</h1>
             <div>
-                <Link
-                    :href="route('categories.create')"
-                    @click="deleteCategory(cat.id)"
-                    class="bg-blue-500 px-4 py-2 text-white rounded-2xl"
+                <Link class="bg-blue-500 px-4 py-2 text-white rounded-2xl"
                     >Create</Link
                 >
             </div>
         </div>
 
+        <!-- User List Start -->
         <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b bg-gray-50">
                 <div class="flex items-center justify-between">
-                    <div class="font-medium">All Categories</div>
+                    <div class="font-medium">All Users</div>
                     <div class="text-sm text-gray-500">
-                        Total: {{ $page.props.categories.length }}
+                        Total: {{ users?.length || 0 }}
                     </div>
                 </div>
             </div>
 
-            <div
-                v-if="$page.props.categories.length === 0"
-                class="px-6 py-12 text-center"
-            >
+            <div v-if="users.length === 0" class="px-6 py-12 text-center">
                 <div
                     class="mx-auto w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3"
                 >
@@ -44,7 +39,7 @@
                         />
                     </svg>
                 </div>
-                <p class="text-gray-600">No categories found.</p>
+                <p class="text-gray-600">No users found.</p>
             </div>
 
             <div v-else class="overflow-x-auto">
@@ -52,52 +47,54 @@
                     <thead class="bg-gray-50 text-gray-600 text-sm">
                         <tr>
                             <th class="px-6 py-3 font-medium">Name</th>
-                            <th class="px-6 py-3 font-medium">Slug</th>
+                            <th class="px-6 py-3 font-medium">Email</th>
                             <th class="px-6 py-3 font-medium">Threads</th>
+                            <th class="px-6 py-3 font-medium">Role</th>
                             <th class="px-6 py-3 font-medium">Created</th>
                             <th class="px-6 py-3 font-medium">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y">
                         <tr
-                            v-for="cat in $page.props.categories"
-                            :key="cat.id"
+                            v-for="user in users"
+                            :key="user.id"
                             class="hover:bg-gray-50"
                         >
                             <td class="px-6 py-4">
                                 <div class="font-medium text-gray-900">
-                                    {{ cat.name }}
+                                    {{ user.name }}
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 <span
                                     class="inline-flex items-center rounded-full bg-indigo-50 text-indigo-700 px-2 py-0.5 text-xs font-medium"
-                                    >{{ cat.slug }}</span
+                                    >{{ user.email }}</span
                                 >
                             </td>
                             <td class="px-6 py-4">
                                 <span
                                     class="inline-flex items-center rounded-md bg-emerald-50 text-emerald-700 px-2 py-1 text-xs font-semibold"
-                                    >{{
-                                        cat.threads_count ??
-                                        cat.threadsCount ??
-                                        0
-                                    }}</span
+                                    >{{ user.threads.length ?? 0 }}</span
                                 >
                             </td>
+                            <td class="px-6 py-4">
+                                <div class="font-small text-gray-900">
+                                    {{ user.is_admin ? "admin" : "user" }}
+                                </div>
+                            </td>
                             <td class="px-6 py-4 text-gray-600 text-sm">
-                                {{ formatDate(cat.created_at) }}
+                                {{ formatDate(user.created_at) }}
                             </td>
                             <td
                                 class="px-6 py-4 text-gray-600 text-sm space-x-4"
                             >
                                 <Link
-                                    :href="route('categories.edit', cat.id)"
                                     class="bg-blue-500 px-3 py-2 text-white rounded-2xl"
                                     >edit</Link
                                 >
                                 <button
-                                    @click="deleteCategory(cat.id)"
+                                    v-if="!user.is_admin"
+                                    @click="openDeleteModal(user)"
                                     class="bg-red-500 px-2 py-1 text-white rounded-2xl"
                                 >
                                     delete
@@ -108,14 +105,54 @@
                 </table>
             </div>
         </div>
+        <!-- User List End -->
+        <!-- Modal Popup Start -->
+        <div
+            v-if="showModal"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black backdrop-blur-sm"
+        >
+            <div class="bg-white rounded-2xl shadow-2xl p-6 w-11/12 max-w-sm">
+                <h2 class="text-xl font-bold text-red-700 mb-4">
+                    Confirm Deletion
+                </h2>
+                <p class="mb-6 text-gray-700">
+                    Are you sure you want to delete? This action cannot be
+                    undone.
+                </p>
+                <div class="flex justify-end gap-4">
+                    <button
+                        @click="closeModal"
+                        class="px-5 py-2 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        @click="confirmDelete"
+                        class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Popup End -->
     </div>
 </template>
 
 <script>
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 
 export default {
     components: { Link },
+    data() {
+        return {
+            showModal: false,
+            userToDelete: null,
+        };
+    },
+    props: {
+        users: { type: Array, required: true },
+    },
     methods: {
         formatDate(value) {
             if (!value) return "-";
@@ -125,8 +162,23 @@ export default {
                 return String(value);
             }
         },
-        deleteCategory(id) {
-            return this.$inertia.delete(route("categories.destroy", id));
+        // ---- Delete ----
+        openDeleteModal(user) {
+            this.userToDelete = user
+            this.showModal = true
+        },
+        closeModal() {
+            this.showModal = false
+            this.userToDelete = null
+        },
+        confirmDelete() {
+            router.delete(route('users.destroy', this.userToDelete.id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    router.reload({ only: ['users'] })
+                },
+            })
+            this.closeModal()
         },
     },
 };

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Thread;
+use Illuminate\Container\Attributes\Auth;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class ThreadController extends Controller
 {
@@ -94,6 +96,39 @@ class ThreadController extends Controller
     public function destroy(Thread $thread)
     {
         $thread->delete();
+        return back();
+    }
+
+    public function adminIndex(){
+        return inertia('Admin/Threads/Index', [
+            'threads' => Thread::with('user', 'category')->latest()->get(),
+        ]);
+    }
+
+    public function adminShow(Thread $thread){
+        $thread->load(['user', 'category', 'tags']);
+        return inertia('Admin/Threads/Show', [
+            'thread' => $thread,
+        ]);
+    }
+
+    public function AdminDestroy(Thread $thread){
+        $thread->delete();
+        return back();
+    }
+
+    //for like function    
+public function like(Thread $thread)
+    {
+        $thread->likeBy()->syncWithoutDetaching([Auth::id()]);
+
+        return back();
+    }
+
+    public function unlike(Thread $thread)
+    {
+        $thread->likeBy()->detach(Auth::id());
+
         return back();
     }
 }
