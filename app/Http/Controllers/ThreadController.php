@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Thread;
+use Illuminate\Container\Attributes\Auth;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class ThreadController extends Controller
 {
@@ -115,4 +117,18 @@ class ThreadController extends Controller
         return back();
     }
 
+    //for like function    
+public function like(Thread $thread)
+    {
+        $thread->likeBy()->syncWithoutDetaching([Auth::id()]);
+
+        return back();
+    }
+
+    public function unlike(Thread $thread)
+    {
+        $thread->likeBy()->detach(Auth::id());
+
+        return back();
+    }
 }
