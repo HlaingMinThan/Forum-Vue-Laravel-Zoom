@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\ThreadController;
+use App\Http\Controllers\ThreadLikeController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Models\Thread;
@@ -49,6 +51,36 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::post('/admin/tag/store',[TagController::class,'store'])->name('tag.store');
     Route::put('/admin/tag/{tag}/update',[TagController::class,'update'])->name('tag.update');
     Route::delete('/admin/tag/{tag}/delete',[TagController::class,'delete'])->name('tag.delete');
+    Route::get('/admin/threads/{thread}/edit', [ThreadController::class, 'edit'])->name('admin.threads.edit');
+
+
+    Route::get('/admin/threads' , [ThreadController::class, 'adminIndex'])->name('admin.threads.index');
+    Route::get('/admin/threads/{thread}/show' , [ThreadController::class, 'adminShow'])->name('admin.threads.show');
+    Route::delete('admin/threads/{thread}/delete', [ThreadController::class, 'adminDestroy'])->name('admin.threads.destroy');
+
+    Route::get('/admin/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::delete('/admin/users/{user}/destroy', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+
+
+    // Admin Users - routes for create and edit forms only
+    // Note: we expose create/edit forms plus store/update endpoints (no index here yet)
+    Route::get('/admin/user/create', [UserController::class, 'create'])->name('users.create');
+    // Alias to support plural URL as well
+    Route::get('/admin/users/create', [UserController::class, 'create']);
+    Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    // Persist a newly created user
+    Route::post('/admin/users/store', [UserController::class, 'store'])->name('users.store');
+    // Persist changes to an existing user
+    Route::put('/admin/users/{user}/update', [UserController::class, 'update'])->name('users.update');
 });
+
+//for like
+Route::post('/threads/{thread}/likes', [ThreadController::class, 'like'])
+    ->name('threads.likes.like');
+
+Route::delete('/threads/{thread}/likes', [ThreadController::class, 'unlike'])
+    ->name('threads.likes.unlike');
+
 
 require __DIR__ . '/auth.php';
