@@ -67,17 +67,17 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-1">
-                                <button
+                                <Link
                                     type="button"
                                     class="bg-blue-500 rounded-2xl text-white py-1 px-2 text-sm"
-                                    @click="
+                                    :href="
                                         route('admin.threads.edit', {
                                             id: thread.id,
                                         })
                                     "
                                 >
                                     Edit
-                                </button>
+                                </Link>
                                 <button
                                     type="button"
                                     class="bg-red-500 rounded-2xl text-white py-1 px-2 text-sm"
