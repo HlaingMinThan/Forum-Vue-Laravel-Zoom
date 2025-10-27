@@ -58,14 +58,14 @@
                         >
                             <td class="px-6 py-4">
                                 <span
-                                    class="inline-flex items-center rounded-full bg-indigo-50 text-indigo-700 px-2 py-0.5 text-xs font-medium"
+                                    class="inline-flex items-center rounded-full text-black px-2 py-0.5 text-xs font-medium"
                                 >
                                     {{ comment.author_name }}
                                 </span>
                             </td>
                             <td class="px-6 py-4">
                                 <span
-                                    class="inline-flex items-center rounded-md bg-gray-50 text-gray-700 px-2 py-1 text-xs font-normal"
+                                    class="inline-flex items-center rounded-md text-black px-2 py-1 text-xs font-normal"
                                 >
                                     {{
                                         comment.thread_title ||
@@ -76,7 +76,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <span
-                                    class="inline-flex items-center rounded-md bg-gray-50 text-gray-700 px-2 py-1 text-xs font-normal"
+                                    class="inline-flex items-center rounded-md text-black px-2 py-1 text-xs font-normal"
                                 >
                                     <VueMarkdown :source="comment.content" />
                                 </span>
