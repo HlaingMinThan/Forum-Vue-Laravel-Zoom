@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowController;
@@ -43,6 +44,10 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/admin/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/admin/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::get('/admin/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::delete('/admin/users/{user}/destroy', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+
 
     // Admin Users - routes for create and edit forms only
     // Note: we expose create/edit forms plus store/update endpoints (no index here yet)
