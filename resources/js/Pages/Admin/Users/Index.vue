@@ -3,7 +3,9 @@
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold">Users</h1>
             <div>
-                <Link class="bg-blue-500 px-4 py-2 text-white rounded-2xl"
+                <Link
+                    :href="route('users.create')"
+                    class="bg-blue-500 px-4 py-2 text-white rounded-2xl"
                     >Create</Link
                 >
             </div>
@@ -89,6 +91,7 @@
                                 class="px-6 py-4 text-gray-600 text-sm space-x-4"
                             >
                                 <Link
+                                    :href="route('users.edit', { id: user.id })"
                                     class="bg-blue-500 px-3 py-2 text-white rounded-2xl"
                                     >edit</Link
                                 >
@@ -164,21 +167,21 @@ export default {
         },
         // ---- Delete ----
         openDeleteModal(user) {
-            this.userToDelete = user
-            this.showModal = true
+            this.userToDelete = user;
+            this.showModal = true;
         },
         closeModal() {
-            this.showModal = false
-            this.userToDelete = null
+            this.showModal = false;
+            this.userToDelete = null;
         },
         confirmDelete() {
-            router.delete(route('users.destroy', this.userToDelete.id), {
+            router.delete(route("users.destroy", this.userToDelete.id), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    router.reload({ only: ['users'] })
+                    router.reload({ only: ["users"] });
                 },
-            })
-            this.closeModal()
+            });
+            this.closeModal();
         },
     },
 };
