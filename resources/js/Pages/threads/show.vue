@@ -530,7 +530,7 @@ function buildLikeUrl(action = "like") {
 }
 
 async function toggleLike() {
-    if (!page.props.value?.auth?.user) {
+    if (!page.props?.auth?.user) {
         router.visit("/login");
         return;
     } else {
@@ -538,7 +538,6 @@ async function toggleLike() {
 
     const previous = liked.value;
     liked.value = !previous;
-
     try {
         if (!previous) {
             await router.post(

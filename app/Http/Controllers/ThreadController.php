@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Thread;
-use Illuminate\Container\Attributes\Auth;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ThreadController extends Controller
 {
@@ -36,6 +36,9 @@ class ThreadController extends Controller
             'thread' => function () use ($thread) {
                 return $thread->load(['category', 'user']);
             },
+            'initialLiked' => auth()->check()
+                ? $thread->likedBy()->where('user_id', auth()->id())->exists()
+                : false,
             'comments' => fn() => $thread->comments()->with('user')->latest()->get()->map(function ($comment) {
                 $comment->commentActionAuthorize = auth()->user()?->can('commentActionAuthorize', $comment);
                 return $comment;
@@ -123,14 +126,14 @@ class ThreadController extends Controller
     //for like function    
     public function like(Thread $thread)
     {
-        $thread->likeBy()->syncWithoutDetaching([Auth::id()]);
+        $thread->likedBy()->syncWithoutDetaching([Auth::id()]);
 
         return back();
     }
 
     public function unlike(Thread $thread)
     {
-        $thread->likeBy()->detach(Auth::id());
+        $thread->likedBy()->detach(Auth::id());
 
         return back();
     }
