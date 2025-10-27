@@ -44,6 +44,10 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/admin/categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/admin/categories/{category}/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::get('/admin/threads' , [ThreadController::class, 'adminIndex'])->name('admin.threads.index');
+    Route::get('/admin/threads/{thread}/show' , [ThreadController::class, 'adminShow'])->name('admin.threads.show');
+    Route::delete('admin/threads/{thread}/delete', [ThreadController::class, 'adminDestroy'])->name('admin.threads.destroy');
+
     Route::get('/admin/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::delete('/admin/users/{user}/destroy', [AdminUserController::class, 'destroy'])->name('users.destroy');
 

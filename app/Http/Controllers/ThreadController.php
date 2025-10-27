@@ -99,6 +99,24 @@ class ThreadController extends Controller
         return back();
     }
 
+    public function adminIndex(){
+        return inertia('Admin/Threads/Index', [
+            'threads' => Thread::with('user', 'category')->latest()->get(),
+        ]);
+    }
+
+    public function adminShow(Thread $thread){
+        $thread->load(['user', 'category', 'tags']);
+        return inertia('Admin/Threads/Show', [
+            'thread' => $thread,
+        ]);
+    }
+
+    public function AdminDestroy(Thread $thread){
+        $thread->delete();
+        return back();
+    }
+
     //for like function    
 public function like(Thread $thread)
     {
