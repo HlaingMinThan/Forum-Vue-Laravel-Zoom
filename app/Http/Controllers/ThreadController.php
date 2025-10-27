@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Thread;
+use Illuminate\Container\Attributes\Auth;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class ThreadController extends Controller
 {
@@ -70,7 +72,7 @@ class ThreadController extends Controller
 
         $thread->tags()->detach(); //delete all thread's tags in pivot table first
         $thread->tags()->attach(request('tag_ids')); // and add all user selected tags
-        return redirect('/');
+        return redirect(route('admin.threads.index'));
     }
     public function store()
     {
@@ -88,12 +90,48 @@ class ThreadController extends Controller
         $thread->user_id = auth()->id();
         $thread->save();
         $thread->tags()->attach(request('tag_ids'));
-        return redirect('/');
+        return redirect(request('redirect_to', '/'));
     }
 
     public function destroy(Thread $thread)
     {
         $thread->delete();
+        return back();
+    }
+
+    public function adminIndex()
+    {
+        return inertia('Admin/Threads/Index', [
+            'threads' => Thread::with('user', 'category')->latest()->get(),
+        ]);
+    }
+
+    public function adminShow(Thread $thread)
+    {
+        $thread->load(['user', 'category', 'tags']);
+        return inertia('Admin/Threads/Show', [
+            'thread' => $thread,
+        ]);
+    }
+
+    public function AdminDestroy(Thread $thread)
+    {
+        $thread->delete();
+        return back();
+    }
+
+    //for like function    
+    public function like(Thread $thread)
+    {
+        $thread->likeBy()->syncWithoutDetaching([Auth::id()]);
+
+        return back();
+    }
+
+    public function unlike(Thread $thread)
+    {
+        $thread->likeBy()->detach(Auth::id());
+
         return back();
     }
 }

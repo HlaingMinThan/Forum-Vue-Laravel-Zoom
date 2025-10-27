@@ -13,7 +13,7 @@
                         </p>
                     </div>
                     <Link
-                        href="/"
+                        :href="backUrl"
                         class="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
                     >
                         <svg
@@ -340,6 +340,9 @@ export default {
                 body: this.thread?.body,
                 category_id: this.thread?.category_id,
                 tag_ids: [],
+                redirect_to: window.location.pathname.startsWith("/admin")
+                    ? "/admin"
+                    : "/",
             }),
             selectedTags: this.thread?.tags ?? [],
             tagSearch: "",
@@ -353,6 +356,11 @@ export default {
         },
         errors() {
             return this.$page.props.errors;
+        },
+        backUrl() {
+            return window.location.pathname.startsWith("/admin")
+                ? "/admin"
+                : "/";
         },
     },
     methods: {
@@ -394,6 +402,7 @@ export default {
             );
         },
         saveDraft() {
+            // Implement draft saving functionality
             console.log("Saving draft...");
         },
         previewThread() {
