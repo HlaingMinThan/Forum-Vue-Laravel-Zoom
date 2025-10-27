@@ -10,14 +10,14 @@ class UserController extends Controller
 {
     public function show(User $user)
     {
-        
+
         return inertia('Profile/show', [
             'user' => $user,
             'already_followed' => auth()->user()->alreadyFollowed($user)
         ]);
     }
 
-    // Render the admin user creation form
+
     public function create()
     {
         return inertia('Admin/Users/UserForm');
@@ -43,7 +43,7 @@ class UserController extends Controller
 
         $user = User::create($validated);
 
-        return redirect()->route('users.edit', $user)->with('success', 'User created.');
+        return redirect()->route('users.index', $user)->with('success', 'User created.');
     }
 
     // Handle updating an existing user from the admin form
@@ -58,6 +58,6 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('users.edit', $user)->with('success', 'User updated.');
+        return redirect()->route('users.index', $user)->with('success', 'User updated.');
     }
 }
