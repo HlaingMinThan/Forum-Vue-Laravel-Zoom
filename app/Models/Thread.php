@@ -35,6 +35,13 @@ class Thread extends Model
         return $this->belongsToMany(Tag::class, 'tag_thread');
     }
 
+    //a thread likeby belongsToMany user
+    public function likedBy()
+    {
+        return $this->belongsToMany(User::class,'thread_user');
+    }
+    
+
     public function scopeFilter($query, $filters)
     {
         $query->when($filters['category'] ?? null, function ($query, $category) {

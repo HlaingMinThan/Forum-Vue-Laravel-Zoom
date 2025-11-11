@@ -12,7 +12,7 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $latestThreads = Thread::with('user', 'category')
+        $latestThreads = Thread::with('user', 'category', 'tags')
             ->orderByDesc('created_at')
             ->take(10)
             ->get();
