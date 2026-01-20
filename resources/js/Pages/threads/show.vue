@@ -234,6 +234,7 @@
                         v-for="comment in comments"
                         :key="comment.id"
                         class="p-6"
+                         :id="'comment-' + comment.id"
                     >
                         <div class="flex items-start space-x-4">
                             <div class="flex-shrink-0">

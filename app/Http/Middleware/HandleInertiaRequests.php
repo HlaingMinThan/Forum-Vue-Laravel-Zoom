@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Category;
 use App\Models\Tag;
+use App\Utility\NotificationUtility;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -37,7 +38,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'categories' => Category::all(),
-            'tags' => Tag::all()
+            'tags' => Tag::all(),
+            'notifications' => $request->user() ? NotificationUtility::getNotifications( $request->user()) : collect(),
+            'unread_count' => $request->user() ? $request->user()->unreadNotifications->count() : 0,
         ];
     }
 }
